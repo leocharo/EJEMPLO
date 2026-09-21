@@ -14,21 +14,21 @@
     <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-white text-emerald-700 p-2 rounded-lg font-bold text-xl">
+                <div class="bg-white text-emerald-700 p-2 rounded-lg font-bold text-lg md:text-xl shadow-xs">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight">Red Telesecundaria</h1>
-                    <p class="text-xs text-emerald-200">Comunidad de Futuros Docentes</p>
+                    <h1 class="font-bold text-sm md:text-lg leading-tight">Red Telesecundaria</h1>
+                    <p class="text-[10px] md:text-xs text-emerald-200">Comunidad de Futuros Docentes</p>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-3" id="auth-nav-container">
-                <!-- Se llena dinámicamente con JS según sesión -->
-                <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-4 py-2 rounded-lg text-sm font-medium transition">
+            <!-- Botones de Navegación / Usuario (Desktop & Mobile) -->
+            <div class="flex items-center space-x-2 md:space-x-3" id="auth-nav-container">
+                <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition shadow-xs">
                     Iniciar Sesión
                 </button>
-                <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">
+                <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition shadow-xs">
                     Registrarse
                 </button>
             </div>
@@ -36,42 +36,42 @@
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <main class="max-w-7xl mx-auto px-4 py-4 md:py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         <!-- BARRA LATERAL (Filtros y Panel Admin) -->
-        <aside class="lg:col-span-1 space-y-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="font-semibold text-slate-700 mb-3 text-sm uppercase tracking-wider">Asignaturas</h2>
-                <div class="space-y-1" id="asignaturas-filtro">
-                    <button onclick="filtrarAsignatura('Todas')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700 transition">Todas las materias</button>
-                    <button onclick="filtrarAsignatura('Español')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Español</button>
-                    <button onclick="filtrarAsignatura('Matemáticas')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Matemáticas</button>
-                    <button onclick="filtrarAsignatura('Ciencias')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Ciencias y Tecnología</button>
-                    <button onclick="filtrarAsignatura('Historia/Formación')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Historia y Civismo</button>
+        <aside class="lg:col-span-1 space-y-4">
+            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200">
+                <h2 class="font-semibold text-slate-700 mb-3 text-xs uppercase tracking-wider">Asignaturas</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1.5" id="asignaturas-filtro">
+                    <button onclick="filtrarAsignatura('Todas')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium bg-emerald-50 text-emerald-700 transition">Todas las materias</button>
+                    <button onclick="filtrarAsignatura('Español')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Español</button>
+                    <button onclick="filtrarAsignatura('Matemáticas')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Matemáticas</button>
+                    <button onclick="filtrarAsignatura('Ciencias')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Ciencias y Tecnología</button>
+                    <button onclick="filtrarAsignatura('Historia/Formación')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Historia y Civismo</button>
                 </div>
             </div>
 
             <!-- Menú exclusivo Admin (Oculto por defecto) -->
-            <div id="admin-menu-box" class="hidden bg-emerald-900 text-white p-4 rounded-xl shadow-sm">
-                <h3 class="font-bold text-sm uppercase tracking-wider text-emerald-300 mb-2">Panel Docente</h3>
-                <p class="text-xs text-emerald-100 mb-3">Tienes privilegios de administración para moderar material didáctico.</p>
-                <button onclick="cambiarVistaAdmin()" class="w-full bg-emerald-700 hover:bg-emerald-600 text-center py-2 rounded-lg text-sm font-medium transition">
+            <div id="admin-menu-box" class="hidden bg-emerald-900 text-white p-4 rounded-2xl shadow-xs">
+                <h3 class="font-bold text-xs uppercase tracking-wider text-emerald-300 mb-1">Panel Docente</h3>
+                <p class="text-[11px] text-emerald-100 mb-3">Privilegios de moderación activos para revisar materiales.</p>
+                <button onclick="cambiarVistaAdmin()" class="w-full bg-emerald-700 hover:bg-emerald-600 text-center py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
                     <i class="fa-solid fa-shield-halved mr-1"></i> Moderar Contenido
                 </button>
             </div>
         </aside>
 
         <!-- SECCIÓN CENTRAL (Foro / Publicaciones) -->
-        <section class="lg:col-span-3 space-y-6">
-            <!-- Barra de Acciones -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="relative w-full sm:w-72">
+        <section class="lg:col-span-3 space-y-4">
+            <!-- Barra de Acciones y Búsqueda -->
+            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="relative w-full sm:w-80">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="input-buscar" oninput="buscarMateriales()" placeholder="Buscar presentaciones..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" id="input-buscar" oninput="buscarMateriales()" placeholder="Buscar presentaciones..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50">
                 </div>
-                <button onclick="abrirModalSubir()" id="btn-subir-modal" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center space-x-2">
+                <button onclick="abrirModalSubir()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition flex items-center justify-center space-x-2 shadow-xs">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Subir Presentación</span>
                 </button>
@@ -79,10 +79,9 @@
 
             <!-- Contenedor de Tarjetas de Materiales -->
             <div id="contenedor-publicaciones" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Se inyecta con JavaScript -->
-                <div class="col-span-2 text-center py-10 text-slate-400">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
-                    <p class="text-sm">Conectando con la base de datos y cargando materiales...</p>
+                <div class="col-span-full text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-600"></i>
+                    <p class="text-xs md:text-sm">Conectando con la base de datos de Firebase...</p>
                 </div>
             </div>
         </section>
@@ -90,28 +89,28 @@
     </main>
 
     <!-- MODAL AUTENTICACIÓN -->
-    <div id="modal-auth" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 relative">
-            <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+    <div id="modal-auth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-xl overflow-hidden p-6 relative my-auto">
+            <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <h2 id="auth-modal-title" class="text-xl font-bold text-slate-800 mb-4">Iniciar Sesión</h2>
+            <h2 id="auth-modal-title" class="text-lg md:text-xl font-bold text-slate-800 mb-4">Iniciar Sesión</h2>
             
-            <form id="form-auth" onsubmit="manejarAuth(event)" class="space-y-4">
+            <form id="form-auth" onsubmit="manejarAuth(event)" class="space-y-3.5">
                 <div id="campo-nombre-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nombre Completo</label>
-                    <input type="text" id="auth-nombre" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Nombre Completo</label>
+                    <input type="text" id="auth-nombre" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Correo Electrónico</label>
-                    <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
-                    <p class="text-[11px] text-slate-400 mt-1">Usa un correo con la palabra 'admin' o 'profesor' para simular perfil docente.</p>
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Correo Electrónico</label>
+                    <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                    <p class="text-[10px] text-slate-400 mt-1">Usa 'profesor' o 'admin' en el correo para perfil docente.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Contraseña</label>
-                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Contraseña</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-medium transition">
+                <button type="submit" id="auth-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
                     Entrar a la Comunidad
                 </button>
             </form>
@@ -119,21 +118,21 @@
     </div>
 
     <!-- MODAL SUBIR MATERIAL -->
-    <div id="modal-subir" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="cerrarModalSubir()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+    <div id="modal-subir" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-xl overflow-hidden p-6 relative my-auto max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarModalSubir()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <h2 class="text-xl font-bold text-slate-800 mb-4">Compartir Material Didáctico</h2>
+            <h2 class="text-lg md:text-xl font-bold text-slate-800 mb-4">Compartir Material Didáctico</h2>
             
-            <form onsubmit="subirMaterial(event)" class="space-y-4">
+            <form onsubmit="subirMaterial(event)" class="space-y-3.5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Título de la Presentación / Secuencia</label>
-                    <input type="text" id="sub-titulo" required placeholder="Ej. Bloque 2: Ecosistemas y Biodiversidad" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Título de la Presentación / Secuencia</label>
+                    <input type="text" id="sub-titulo" required placeholder="Ej. Bloque 2: Ecosistemas y Biodiversidad" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Asignatura</label>
-                    <select id="sub-asignatura" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Asignatura</label>
+                    <select id="sub-asignatura" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                         <option value="Español">Español</option>
                         <option value="Matemáticas">Matemáticas</option>
                         <option value="Ciencias">Ciencias y Tecnología</option>
@@ -141,14 +140,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Enlace del Recurso (Drive, Canva, Genially, etc.)</label>
-                    <input type="url" id="sub-url" required placeholder="https://canva.com/design/..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Enlace del Recurso (Drive, Canva, Genially, etc.)</label>
+                    <input type="url" id="sub-url" required placeholder="https://canva.com/design/..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Descripción Breve o Propósito Didáctico</label>
-                    <textarea id="sub-desc" rows="3" required placeholder="Describe cómo aplicar esta presentación en el aula multigrado..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"></textarea>
+                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Descripción Breve o Propósito Didáctico</label>
+                    <textarea id="sub-desc" rows="3" required placeholder="Describe cómo aplicar esta presentación en el aula..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-sm font-medium transition">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
                     Enviar a Revisión Docente
                 </button>
             </form>
@@ -159,7 +158,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBdgXatY1zLKmkP4VDkvIz6xfzixDVNE5I",
@@ -181,7 +180,6 @@
         let filtroAsignaturaActual = 'Todas';
         let modoAdminVisualizacion = false;
 
-        // Escuchar estado de autenticación
         onAuthStateChanged(auth, (user) => {
             const navContainer = document.getElementById('auth-nav-container');
             const adminBox = document.getElementById('admin-menu-box');
@@ -191,11 +189,11 @@
                 esAdmin = user.email.toLowerCase().includes('admin') || user.email.toLowerCase().includes('profesor');
                 
                 navContainer.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="text-xs bg-emerald-800 px-3 py-1 rounded-full text-emerald-100 hidden sm:inline-block">
-                            ${esAdmin ? '👑 Docente / Admin' : '🎓 Estudiante'} (${user.email})
+                    <div class="flex items-center space-x-2">
+                        <span class="text-[11px] bg-emerald-800 px-2.5 py-1 rounded-full text-emerald-100 hidden sm:inline-block">
+                            ${esAdmin ? '👑 Docente' : '🎓 Estudiante'}
                         </span>
-                        <button onclick="cerrarSesion()" class="bg-emerald-800 hover:bg-emerald-900 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+                        <button onclick="cerrarSesion()" class="bg-emerald-800 hover:bg-emerald-900 px-3 py-1.5 rounded-xl text-xs font-medium transition">
                             Salir
                         </button>
                     </div>
@@ -211,10 +209,10 @@
                 esAdmin = false;
                 adminBox.classList.add('hidden');
                 navContainer.innerHTML = `
-                    <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm font-medium transition">
                         Iniciar Sesión
                     </button>
-                    <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm font-medium transition">
                         Registrarse
                     </button>
                 `;
@@ -222,7 +220,6 @@
             cargarPublicaciones();
         });
 
-        // Funciones Globales para UI y Firebase
         window.abrirModalAuth = function(tipo) {
             const modal = document.getElementById('modal-auth');
             const nombreContainer = document.getElementById('campo-nombre-container');
@@ -232,7 +229,7 @@
             modal.classList.remove('hidden');
             if (tipo === 'register') {
                 nombreContainer.classList.remove('hidden');
-                title.innerText = "Registro de Estudiante / Docente";
+                title.innerText = "Registro";
                 btn.innerText = "Registrarse";
                 modal.dataset.modo = "register";
             } else {
@@ -302,7 +299,7 @@
                     url,
                     descripcion,
                     autor: usuarioActual.email,
-                    estado: esAdmin ? "aprobado" : "pendiente", // Si es admin se aprueba directo, si es estudiante pasa a moderación
+                    estado: esAdmin ? "aprobado" : "pendiente",
                     fecha: serverTimestamp()
                 });
                 alert(esAdmin ? "Material publicado con éxito." : "Material enviado a revisión docente.");
@@ -318,7 +315,7 @@
 
         async function cargarPublicaciones() {
             const contenedor = document.getElementById('contenedor-publicaciones');
-            contenedor.innerHTML = `<div class="col-span-2 text-center py-10 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">Actualizando muro...</p></div>`;
+            contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-600"></i><p class="text-xs md:text-sm">Actualizando muro...</p></div>`;
 
             try {
                 const querySnapshot = await getDocs(collection(db, "publicaciones"));
@@ -328,7 +325,7 @@
                 });
                 renderizarPublicaciones();
             } catch (error) {
-                contenedor.innerHTML = `<div class="col-span-2 text-center py-10 text-red-500 text-sm">Error al cargar publicaciones de Firestore. Verifica tus permisos o conexión.</div>`;
+                contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 text-xs md:text-sm">Error al cargar publicaciones de Firestore.</div>`;
             }
         }
 
@@ -337,10 +334,8 @@
             let filtrados = listaGlobalPublicaciones;
 
             if (modoAdminVisualizacion && esAdmin) {
-                // Ver solo pendientes o todo para moderar
                 filtrados = filtrados.filter(p => p.estado === 'pendiente' || p.estado === 'aprobado');
             } else {
-                // Vista normal público: solo aprobados
                 filtrados = filtrados.filter(p => p.estado === 'aprobado');
                 if (filtroAsignaturaActual !== 'Todas') {
                     filtrados = filtrados.filter(p => p.asignatura === filtroAsignaturaActual);
@@ -353,30 +348,30 @@
             }
 
             if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="col-span-2 bg-white p-8 rounded-xl text-center border border-slate-200 text-slate-400 text-sm">No hay publicaciones disponibles en esta sección.</div>`;
+                contenedor.innerHTML = `<div class="col-span-full bg-white p-8 rounded-2xl text-center border border-slate-200 text-slate-400 text-xs md:text-sm">No hay publicaciones disponibles en esta sección.</div>`;
                 return;
             }
 
             contenedor.innerHTML = filtrados.map(p => `
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
+                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col justify-between space-y-3">
                     <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">${p.asignatura}</span>
-                            <span class="text-[11px] px-2 py-0.5 rounded ${p.estado === 'aprobado' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700 font-bold'}">${p.estado.toUpperCase()}</span>
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] md:text-[11px] font-semibold px-2.5 py-0.5 rounded-full">${p.asignatura}</span>
+                            <span class="text-[10px] md:text-[11px] px-2 py-0.5 rounded-md ${p.estado === 'aprobado' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700 font-bold'}">${p.estado.toUpperCase()}</span>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">${p.titulo}</h3>
-                        <p class="text-xs text-slate-500 mb-3">${p.descripcion}</p>
-                        <p class="text-[11px] text-slate-400"><i class="fa-solid fa-user-pen mr-1"></i> ${p.autor || 'Anónimo'}</p>
+                        <h3 class="font-bold text-slate-800 text-sm md:text-base mb-1 leading-snug">${p.titulo}</h3>
+                        <p class="text-xs text-slate-500 mb-3 leading-relaxed">${p.descripcion}</p>
+                        <p class="text-[10px] md:text-[11px] text-slate-400"><i class="fa-solid fa-user-pen mr-1"></i> ${p.autor || 'Anónimo'}</p>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                        <a href="${p.url}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1">
+                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
+                        <a href="${p.url}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center space-x-1 shadow-xs">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             <span>Ver Presentación</span>
                         </a>
                         ${esAdmin ? `
-                            <div class="space-x-1">
-                                ${p.estado === 'pendiente' ? `<button onclick="cambiarEstado('${p.id}', 'aprobado')" class="bg-green-600 text-white px-2.5 py-1 rounded text-xs">Aprobar</button>` : ''}
-                                <button onclick="eliminarPublicacion('${p.id}')" class="bg-red-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+                            <div class="flex space-x-1">
+                                ${p.estado === 'pendiente' ? `<button onclick="cambiarEstado('${p.id}', 'aprobado')" class="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg text-xs transition">Aprobar</button>` : ''}
+                                <button onclick="eliminarPublicacion('${p.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-xs transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         ` : ''}
                     </div>
