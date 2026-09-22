@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Red Telesecundaria</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Work Sans', ui-sans-serif, system-ui, sans-serif; }
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        input:focus, select:focus, textarea:focus, button:focus-visible {
+            outline: 2px solid #C05D3B;
+            outline-offset: 1px;
+        }
+        .chalk-rule {
+            background-image: repeating-linear-gradient(90deg, rgba(251,247,238,.45) 0 9px, transparent 9px 17px);
+        }
+    </style>
+</head>
+<body class="min-h-screen" style="background-color:#FBF7EE; color:#2B2620;">
+
+    <div class="min-h-screen w-full flex items-center justify-center p-4 md:p-6">
+        <div class="w-full max-w-4xl bg-white rounded-[28px] shadow-xl border border-[#E7DFC9] overflow-hidden grid grid-cols-1 md:grid-cols-[1.1fr_1.4fr]">
+
+           <!-- PANEL DE MARCA -->
+<div class="flex flex-col justify-between p-6 md:p-9 relative" style="background-color:#1F3B2C; color:#FBF7EE;">
+                <div>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-8" style="background-color:#FBF7EE; color:#1F3B2C;">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="font-display text-2xl leading-snug mb-3">Un lugar para compartir<br>lo que enseñas.</h2>
+                    <p class="text-sm leading-relaxed" style="color:#CBDACF;">Planeaciones, fichas y materiales de telesecundarias de toda la red, reunidos por docentes para docentes.</p>
+                </div>
+                <div class="space-y-3 text-xs" style="color:#CBDACF;">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-book-open" style="color:#D9A441;"></i><span>Materiales por asignatura y grado</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-people-group" style="color:#D9A441;"></i><span>Comunidad de maestras y maestros</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-shield-heart" style="color:#D9A441;"></i><span>Acceso verificado por correo (15 min)</span></div>
+                </div>
+                <div class="chalk-rule h-[3px] w-16 mt-8 rounded-full"></div>
+            </div>
+
+            <!-- PANEL DE FORMULARIO -->
+            <div class="p-6 md:p-10">
+                <div class="mb-7">
+                    <h1 id="auth-titulo-principal" class="font-display text-2xl md:text-[28px] font-semibold" style="color:#1F3B2C;">Iniciar Sesión</h1>
+                    <p id="auth-subtitulo" class="text-xs md:text-sm mt-1.5" style="color:#6B6255;">Accede a la comunidad de materiales didácticos</p>
+                </div>
+
+                <!-- FORMULARIO DE ACCESO / REGISTRO -->
+                <!-- Dentro del formulario de autenticación en inicio_sesion.html -->
+<form id="form-auth-pagina" onsubmit="manejarAuthPagina(event)" class="space-y-4">
+    <div id="campo-nombre-container" class="hidden">
+        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre completo</label>
+        <input type="text" id="auth-nombre" placeholder="Tu nombre y apellido" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+    </div>
+
+    <!-- NUEVO CAMPO DE USUARIO -->
+    <div id="campo-usuario-container" class="hidden">
+        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre de usuario</label>
+        <input type="text" id="auth-usuario" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+    </div>
+
+    <div>
+        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Correo electrónico</label>
+        <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+    </div>
+
+    <div>
+        <div class="flex justify-between items-center mb-1.5">
+            <label class="block text-[12px] font-medium" style="color:#6B6255;">Contraseña</label>
+            <div id="contenedor-olvido-pass">
+                <button type="button" onclick="recuperarContraseña()" class="text-[11px] font-medium hover:underline" style="color:#2F6B4F;">¿Olvidaste tu contraseña?</button>
+            </div>
+        </div>
+        <div class="relative">
+            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 pr-10 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+            <button type="button" onclick="alternarVisibilidadPassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center transition-colors" style="color:#9C927F;">
+                <i id="icono-ojo" class="fa-solid fa-eye text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <button type="submit" id="auth-submit-btn" class="w-full text-white py-3 rounded-lg text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
+        Entrar a la Comunidad
+    </button>
+</form>
+
+                <!-- SECCIÓN DE ESPERA DE VERIFICACIÓN DE CORREO -->
+                <div id="seccion-verificacion-pendiente" class="hidden text-center space-y-4">
+                    <div class="border p-4 rounded-2xl text-xs md:text-sm space-y-2" style="background-color:#FBF3E4; border-color:#EBD6A6; color:#7A5B1E;">
+                        <i class="fa-solid fa-envelope-circle-check text-2xl mb-1" style="color:#D9A441;"></i>
+                        <p class="font-semibold">Verifica tu correo electrónico</p>
+                        <p class="text-xs" style="color:#8A7F6C;">Hemos enviado un enlace de confirmación a <strong id="email-usuario-enviado" style="color:#2B2620;"></strong>. Por favor, revisa tu bandeja de entrada o spam para activar tu cuenta.</p>
+                    </div>
+                    <button onclick="verificarEstadoCuenta()" class="w-full text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition hover:opacity-95" style="background-color:#2F6B4F;">
+                        Ya verifiqué mi correo
+                    </button>
+                    <button id="btn-reenviar-correo" onclick="reenviarCorreoVerificacion()" class="w-full py-2 rounded-lg text-xs font-medium transition" style="background-color:#F3ECDC; color:#4A4438;">
+                        Reenviar correo de verificación
+                    </button>
+                    <button onclick="cerrarSesionVerificacion()" class="text-xs hover:underline pt-2 block mx-auto" style="color:#C05D3B;">
+                        Cerrar sesión / Usar otra cuenta
+                    </button>
+                </div>
+
+                <!-- CAMBIO ENTRE LOGIN Y REGISTRO -->
+                <div id="contenedor-cambio-modo" class="mt-6 text-center border-t pt-4" style="border-color:#F0EADA;">
+                    <p id="auth-texto-alternativo" class="text-xs" style="color:#6B6255;">
+                        ¿No tienes cuenta?
+                        <button type="button" onclick="cambiarModoAuth('register')" class="font-semibold hover:underline" style="color:#2F6B4F;">Regístrate aquí</button>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE AUTENTICACIÓN -->
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

@@ -3,418 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Telesecundaria - Foro de Materiales Didácticos</title>
+    <title>Red Telesecundaria - Comunidad Educativa</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Work Sans', ui-sans-serif, system-ui, sans-serif; }
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        input:focus, select:focus, textarea:focus, button:focus-visible {
+            outline: 2px solid #C05D3B;
+            outline-offset: 1px;
+        }
+        .chalk-rule {
+            background-image: repeating-linear-gradient(90deg, rgba(251,247,238,.4) 0 8px, transparent 8px 16px);
+        }
+        #contenedor-publicaciones::-webkit-scrollbar,
+        .filtros-scroll::-webkit-scrollbar { height: 4px; }
+        .filtros-scroll::-webkit-scrollbar-thumb { background: #E7DFC9; border-radius: 4px; }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col" style="background-color:#FBF7EE; color:#2B2620;">
 
     <!-- HEADER / NAVEGACIÓN -->
-    <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <header class="text-white shadow-md sticky top-0 z-50" style="background-color:#1F3B2C;">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-white text-emerald-700 p-2 rounded-lg font-bold text-lg md:text-xl shadow-xs">
+                <div class="p-2 rounded-xl font-bold text-lg md:text-xl shadow-sm w-10 h-10 flex items-center justify-center" style="background-color:#FBF7EE; color:#1F3B2C;">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm md:text-lg leading-tight">Red Telesecundaria</h1>
-                    <p class="text-[10px] md:text-xs text-emerald-200">Comunidad de Futuros Docentes</p>
+                    <h1 class="font-display font-semibold text-sm md:text-lg leading-tight tracking-tight">Red Telesecundaria</h1>
+                    <p class="text-[10px] md:text-xs" style="color:#C9D9CE;">Comunidad y materiales didácticos</p>
                 </div>
             </div>
-            
-            <!-- Botones de Navegación / Usuario (Desktop & Mobile) -->
             <div class="flex items-center space-x-2 md:space-x-3" id="auth-nav-container">
-                <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition shadow-xs">
-                    Iniciar Sesión
-                </button>
-                <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition shadow-xs">
-                    Registrarse
-                </button>
+                <!-- Se llena dinámicamente según sesión -->
             </div>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-4 py-4 md:py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        <!-- BARRA LATERAL (Filtros y Panel Admin) -->
-        <aside class="lg:col-span-1 space-y-4">
-            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200">
-                <h2 class="font-semibold text-slate-700 mb-3 text-xs uppercase tracking-wider">Asignaturas</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1.5" id="asignaturas-filtro">
-                    <button onclick="filtrarAsignatura('Todas')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium bg-emerald-50 text-emerald-700 transition">Todas las materias</button>
-                    <button onclick="filtrarAsignatura('Español')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Español</button>
-                    <button onclick="filtrarAsignatura('Matemáticas')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Matemáticas</button>
-                    <button onclick="filtrarAsignatura('Ciencias')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Ciencias y Tecnología</button>
-                    <button onclick="filtrarAsignatura('Historia/Formación')" class="w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Historia y Civismo</button>
-                </div>
-            </div>
+    <!-- CONTENIDO PRINCIPAL (BLOQUEADO SI NO HAY SESIÓN) -->
+    <main id="contenido-foro" class="max-w-3xl mx-auto px-4 py-4 md:py-6 flex-grow w-full space-y-6 hidden">
 
-            <!-- Menú exclusivo Admin (Oculto por defecto) -->
-            <div id="admin-menu-box" class="hidden bg-emerald-900 text-white p-4 rounded-2xl shadow-xs">
-                <h3 class="font-bold text-xs uppercase tracking-wider text-emerald-300 mb-1">Panel Docente</h3>
-                <p class="text-[11px] text-emerald-100 mb-3">Privilegios de moderación activos para revisar materiales.</p>
-                <button onclick="cambiarVistaAdmin()" class="w-full bg-emerald-700 hover:bg-emerald-600 text-center py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
-                    <i class="fa-solid fa-shield-halved mr-1"></i> Moderar Contenido
+        <!-- BARRA DE ACCIÓN: CREAR PUBLICACIÓN -->
+        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border flex items-center space-x-3" style="border-color:#E7DFC9;">
+            <div id="avatar-usuario-muro" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden" style="background-color:#F3ECDC; color:#1F3B2C;">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <button onclick="abrirModalSubir()" class="w-full text-left px-4 py-3 rounded-2xl text-xs md:text-sm transition-colors flex items-center justify-between border border-dashed" style="background-color:#FBF7EE; color:#8A7F6C; border-color:#C9BFA0;">
+                <span>¿Qué material didáctico o planeación deseas compartir hoy?</span>
+                <i class="fa-solid fa-images" style="color:#2F6B4F;"></i>
+            </button>
+        </div>
+
+        <!-- BARRA DE ACCIÓN: CREAR EXPERIENCIA DE PRÁCTICAS -->
+        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border flex items-center space-x-3" style="border-color:#E7DFC9;">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden" style="background-color:#F3ECDC; color:#1F3B2C;">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <button onclick="abrirModalExperiencia()" class="w-full text-left px-4 py-3 rounded-2xl text-xs md:text-sm transition-colors flex items-center justify-between border border-dashed" style="background-color:#FBF7EE; color:#8A7F6C; border-color:#C9BFA0;">
+                <span>¿Cómo te fue como docente frente a grupo? Cuéntanos tu experiencia...</span>
+                <i class="fa-solid fa-map-location-dot" style="color:#2F6B4F;"></i>
+            </button>
+        </div>
+
+        <!-- FILTROS Y BUSCADOR -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border flex flex-col sm:flex-row justify-between items-center gap-3" style="border-color:#E7DFC9;">
+            <div class="filtros-scroll flex items-center space-x-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0" id="contenedor-filtros-asignaturas">
+                <button onclick="filtrarAsignatura('Todas')" id="btn-todas" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-600 text-white transition shrink-0">Todas</button>
+            </div>
+            <div id="admin-toggle-container" class="hidden w-full sm:w-auto">
+                <button onclick="cambiarVistaAdmin()" id="btn-modo-admin" class="w-full sm:w-auto text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm hover:opacity-90" style="background-color:#C05D3B;">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Modo Moderación Admin
                 </button>
             </div>
-        </aside>
+        </div>
 
-        <!-- SECCIÓN CENTRAL (Foro / Publicaciones) -->
-        <section class="lg:col-span-3 space-y-4">
-            <!-- Barra de Acciones y Búsqueda -->
-            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div class="relative w-full sm:w-80">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="input-buscar" oninput="buscarMateriales()" placeholder="Buscar presentaciones..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50">
-                </div>
-                <button onclick="abrirModalSubir()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition flex items-center justify-center space-x-2 shadow-xs">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span>Subir Presentación</span>
+        <!-- Panel de administración de asignaturas -->
+        <div id="panel-gestion-materias" class="bg-white p-5 rounded-2xl shadow-sm border space-y-4 hidden" style="border-color:#E7DFC9;">
+            <h3 class="font-display text-base font-semibold" style="color:#1F3B2C;">Gestionar Asignaturas de la Comunidad</h3>
+            <form onsubmit="agregarAsignaturaAdmin(event)" class="flex gap-2">
+                <input type="text" id="nueva-asignatura-input" placeholder="Nombre de la nueva asignatura..." class="w-full px-3.5 py-2 border rounded-xl text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9]" required>
+                <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-medium transition shrink-0">
+                    Agregar
                 </button>
-            </div>
+            </form>
+            <div id="lista-materias-admin" class="flex flex-wrap gap-2 pt-2"></div>
+        </div>
 
-            <!-- Contenedor de Tarjetas de Materiales -->
-            <div id="contenedor-publicaciones" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="col-span-full text-center py-12 text-slate-400">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-600"></i>
-                    <p class="text-xs md:text-sm">Conectando con la base de datos de Firebase...</p>
-                </div>
+        <!-- CONTENEDOR DE PUBLICACIONES ESTILO MURO -->
+        <div id="contenedor-publicaciones" class="space-y-4">
+            <div class="bg-white p-12 rounded-2xl text-center border" style="border-color:#E7DFC9; color:#9C927F;">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2" style="color:#2F6B4F;"></i>
+                <p class="text-xs md:text-sm">Cargando publicaciones de la comunidad...</p>
             </div>
-        </section>
+        </div>
+
+        <!-- SECCIÓN DE EXPERIENCIAS DE PRÁCTICAS -->
+        <div class="pt-2 space-y-4">
+            <h3 class="font-display text-lg font-semibold" style="color:#1F3B2C;">Experiencias de Prácticas</h3>
+            <div id="contenedor-experiencias" class="space-y-4"></div>
+        </div>
 
     </main>
 
-    <!-- MODAL AUTENTICACIÓN -->
-    <div id="modal-auth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-xl overflow-hidden p-6 relative my-auto">
-            <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h2 id="auth-modal-title" class="text-lg md:text-xl font-bold text-slate-800 mb-4">Iniciar Sesión</h2>
-            
-            <form id="form-auth" onsubmit="manejarAuth(event)" class="space-y-3.5">
-                <div id="campo-nombre-container" class="hidden">
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Nombre Completo</label>
-                    <input type="text" id="auth-nombre" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Correo Electrónico</label>
-                    <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                    <p class="text-[10px] text-slate-400 mt-1">Usa 'profesor' o 'admin' en el correo para perfil docente.</p>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Contraseña</label>
-                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
-                    Entrar a la Comunidad
-                </button>
-            </form>
+    <!-- ESTADO BLOQUEADO SI NO HA INICIADO SESIÓN -->
+    <div id="estado-no-autenticado" class="max-w-md mx-auto px-4 py-20 flex-grow flex items-center justify-center text-center hidden">
+        <div class="bg-white p-8 rounded-3xl shadow-xl border space-y-4" style="border-color:#E7DFC9;">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl" style="background-color:#F3ECDC; color:#1F3B2C;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="font-display text-lg font-semibold" style="color:#1F3B2C;">Contenido Protegido</h2>
+            <p class="text-xs md:text-sm" style="color:#6B6255;">Debes iniciar sesión o registrarte para poder visualizar el foro, descargar materiales o compartir publicaciones.</p>
+            <a href="inicio_sesion.html" class="inline-block w-full text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
+                Ir a Iniciar Sesión
+            </a>
         </div>
     </div>
 
-    <!-- MODAL SUBIR MATERIAL -->
-    <div id="modal-subir" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <!-- MODAL CREAR PUBLICACIÓN -->
+    <div id="modal-subir" class="fixed inset-0 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto" style="background-color:rgba(31,59,44,.55);">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-xl overflow-hidden p-6 relative my-auto max-h-[90vh] overflow-y-auto">
-            <button onclick="cerrarModalSubir()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
+            <button onclick="cerrarModalSubir()" class="absolute top-4 right-4 p-2 transition-colors" style="color:#9C927F;">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <h2 class="text-lg md:text-xl font-bold text-slate-800 mb-4">Compartir Material Didáctico</h2>
-            
-            <form onsubmit="subirMaterial(event)" class="space-y-3.5">
+            <h2 class="font-display text-lg md:text-xl font-semibold mb-2" style="color:#1F3B2C;">Crear Publicación Didáctica</h2>
+
+            <form onsubmit="subirPublicacion(event)" class="space-y-3.5">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Título de la Presentación / Secuencia</label>
-                    <input type="text" id="sub-titulo" required placeholder="Ej. Bloque 2: Ecosistemas y Biodiversidad" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Título de la publicación</label>
+                    <input type="text" id="sub-titulo" required placeholder="Ej. Secuencia didáctica de energías renovables" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Asignatura</label>
-                    <select id="sub-asignatura" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                        <option value="Español">Español</option>
-                        <option value="Matemáticas">Matemáticas</option>
-                        <option value="Ciencias">Ciencias y Tecnología</option>
-                        <option value="Historia/Formación">Historia y Civismo</option>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Asignatura</label>
+                    <select id="sub-asignatura" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;" required></select>
+                </div>
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">¿Qué deseas compartir en el foro?</label>
+                    <textarea id="sub-desc" rows="3" required placeholder="Escribe tu aportación, descripción o consigna..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;"></textarea>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Adjuntar imágenes (máx. 1 MB en total)</label>
+    <input type="file" id="sub-imagen" accept="image/*" multiple class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
+</div>
+                    <div>
+                        <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Archivo PDF / Word</label>
+                        <input type="file" id="sub-archivo" accept=".pdf,.doc,.docx,.ppt,.pptx" class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">¿Cómo deseas aparecer en esta publicación?</label>
+                    <select id="sub-visibilidad-autor" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;">
+                        <option value="usuario">Mostrar mi Nombre de Usuario</option>
+                        <option value="correo">Mostrar mi Correo Electrónico</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Enlace del Recurso (Drive, Canva, Genially, etc.)</label>
-                    <input type="url" id="sub-url" required placeholder="https://canva.com/design/..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 uppercase mb-1">Descripción Breve o Propósito Didáctico</label>
-                    <textarea id="sub-desc" rows="3" required placeholder="Describe cómo aplicar esta presentación en el aula..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-xs">
-                    Enviar a Revisión Docente
+                <button type="submit" id="btn-publicar-submit" class="w-full text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
+                    Publicar en la Comunidad
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT DE FIREBASE Y LÓGICA -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    <!-- MODAL CREAR EXPERIENCIA DE PRÁCTICAS -->
+    <div id="modal-experiencia" class="fixed inset-0 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4 overflow-y-auto" style="background-color:rgba(31,59,44,.55);">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-xl overflow-hidden p-6 relative my-auto max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarModalExperiencia()" class="absolute top-4 right-4 p-2 transition-colors" style="color:#9C927F;">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h2 class="font-display text-lg md:text-xl font-semibold mb-1" style="color:#1F3B2C;">Cuéntanos tu experiencia en prácticas</h2>
+            <p class="text-xs text-slate-500 mb-4">Comparte cómo te fue como docente frente a grupo en tu Telesecundaria.</p>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBdgXatY1zLKmkP4VDkvIz6xfzixDVNE5I",
-            authDomain: "telesecundaria-aad6d.firebaseapp.com",
-            projectId: "telesecundaria-aad6d",
-            storageBucket: "telesecundaria-aad6d.firebasestorage.app",
-            messagingSenderId: "406908968658",
-            appId: "1:406908968658:web:f1ab69e45365ec04a7970b",
-            measurementId: "G-H7WK2J3WVZ"
-        };
+            <form onsubmit="guardarExperienciaPractica(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Nombre de la Telesecundaria y Localidad</label>
+                    <input type="text" id="input-nombre-escuela" required placeholder="Ej. Telesecundaria Benito Juárez, Puebla" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Enlace de Google Maps de la escuela</label>
+                    <input type="url" id="input-link-mapa" required placeholder="Pega aquí el enlace de Google Maps" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                </div>
 
-        let usuarioActual = null;
-        let esAdmin = false;
-        let listaGlobalPublicaciones = [];
-        let filtroAsignaturaActual = 'Todas';
-        let modoAdminVisualizacion = false;
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Tu experiencia</label>
+                    <textarea id="input-texto-experiencia" rows="3" required placeholder="Describe tus vivencias, retos y anécdotas dando clases..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;"></textarea>
+                </div>
 
-        onAuthStateChanged(auth, (user) => {
-            const navContainer = document.getElementById('auth-nav-container');
-            const adminBox = document.getElementById('admin-menu-box');
-            
-            if (user) {
-                usuarioActual = user;
-                esAdmin = user.email.toLowerCase().includes('admin') || user.email.toLowerCase().includes('profesor');
-                
-                navContainer.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span class="text-[11px] bg-emerald-800 px-2.5 py-1 rounded-full text-emerald-100 hidden sm:inline-block">
-                            ${esAdmin ? '👑 Docente' : '🎓 Estudiante'}
-                        </span>
-                        <button onclick="cerrarSesion()" class="bg-emerald-800 hover:bg-emerald-900 px-3 py-1.5 rounded-xl text-xs font-medium transition">
-                            Salir
-                        </button>
-                    </div>
-                `;
-
-                if (esAdmin) {
-                    adminBox.classList.remove('hidden');
-                } else {
-                    adminBox.classList.add('hidden');
-                }
-            } else {
-                usuarioActual = null;
-                esAdmin = false;
-                adminBox.classList.add('hidden');
-                navContainer.innerHTML = `
-                    <button onclick="abrirModalAuth('login')" class="bg-emerald-800 hover:bg-emerald-900 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm font-medium transition">
-                        Iniciar Sesión
-                    </button>
-                    <button onclick="abrirModalAuth('register')" class="bg-white text-emerald-700 hover:bg-emerald-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm font-medium transition">
-                        Registrarse
-                    </button>
-                `;
-            }
-            cargarPublicaciones();
-        });
-
-        window.abrirModalAuth = function(tipo) {
-            const modal = document.getElementById('modal-auth');
-            const nombreContainer = document.getElementById('campo-nombre-container');
-            const title = document.getElementById('auth-modal-title');
-            const btn = document.getElementById('auth-submit-btn');
-            
-            modal.classList.remove('hidden');
-            if (tipo === 'register') {
-                nombreContainer.classList.remove('hidden');
-                title.innerText = "Registro";
-                btn.innerText = "Registrarse";
-                modal.dataset.modo = "register";
-            } else {
-                nombreContainer.classList.add('hidden');
-                title.innerText = "Iniciar Sesión";
-                btn.innerText = "Entrar";
-                modal.dataset.modo = "login";
-            }
-        }
-
-        window.cerrarModalAuth = function() {
-            document.getElementById('modal-auth').classList.add('hidden');
-        }
-
-        window.abrirModalSubir = function() {
-            if (!usuarioActual) {
-                alert("Debes iniciar sesión para compartir presentaciones.");
-                abrirModalAuth('login');
-                return;
-            }
-            document.getElementById('modal-subir').classList.remove('hidden');
-        }
-
-        window.cerrarModalSubir = function() {
-            document.getElementById('modal-subir').classList.add('hidden');
-        }
-
-        window.manejarAuth = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const modo = document.getElementById('modal-auth').dataset.modo;
-
-            try {
-                if (modo === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    alert("¡Cuenta creada con éxito!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    alert("¡Sesión iniciada correctamente!");
-                }
-                cerrarModalAuth();
-            } catch (error) {
-                alert("Error de autenticación: " + error.message);
-            }
-        }
-
-        window.cerrarSesion = async function() {
-            await signOut(auth);
-            modoAdminVisualizacion = false;
-            cargarPublicaciones();
-        }
-
-        window.subirMaterial = async function(e) {
-            e.preventDefault();
-            if (!usuarioActual) return;
-
-            const titulo = document.getElementById('sub-titulo').value;
-            const asignatura = document.getElementById('sub-asignatura').value;
-            const url = document.getElementById('sub-url').value;
-            const descripcion = document.getElementById('sub-desc').value;
-
-            try {
-                await addDoc(collection(db, "publicaciones"), {
-                    titulo,
-                    asignatura,
-                    url,
-                    descripcion,
-                    autor: usuarioActual.email,
-                    estado: esAdmin ? "aprobado" : "pendiente",
-                    fecha: serverTimestamp()
-                });
-                alert(esAdmin ? "Material publicado con éxito." : "Material enviado a revisión docente.");
-                cerrarModalSubir();
-                document.getElementById('sub-titulo').value = '';
-                document.getElementById('sub-url').value = '';
-                document.getElementById('sub-desc').value = '';
-                cargarPublicaciones();
-            } catch (error) {
-                alert("Error al subir material: " + error.message);
-            }
-        }
-
-        async function cargarPublicaciones() {
-            const contenedor = document.getElementById('contenedor-publicaciones');
-            contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-600"></i><p class="text-xs md:text-sm">Actualizando muro...</p></div>`;
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "publicaciones"));
-                listaGlobalPublicaciones = [];
-                querySnapshot.forEach((docSnap) => {
-                    listaGlobalPublicaciones.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderizarPublicaciones();
-            } catch (error) {
-                contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 text-xs md:text-sm">Error al cargar publicaciones de Firestore.</div>`;
-            }
-        }
-
-        window.renderizarPublicaciones = function() {
-            const contenedor = document.getElementById('contenedor-publicaciones');
-            let filtrados = listaGlobalPublicaciones;
-
-            if (modoAdminVisualizacion && esAdmin) {
-                filtrados = filtrados.filter(p => p.estado === 'pendiente' || p.estado === 'aprobado');
-            } else {
-                filtrados = filtrados.filter(p => p.estado === 'aprobado');
-                if (filtroAsignaturaActual !== 'Todas') {
-                    filtrados = filtrados.filter(p => p.asignatura === filtroAsignaturaActual);
-                }
-            }
-
-            const textoBusqueda = document.getElementById('input-buscar').value.toLowerCase();
-            if (textoBusqueda) {
-                filtrados = filtrados.filter(p => p.titulo.toLowerCase().includes(textoBusqueda) || p.descripcion.toLowerCase().includes(textoBusqueda));
-            }
-
-            if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="col-span-full bg-white p-8 rounded-2xl text-center border border-slate-200 text-slate-400 text-xs md:text-sm">No hay publicaciones disponibles en esta sección.</div>`;
-                return;
-            }
-
-            contenedor.innerHTML = filtrados.map(p => `
-                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col justify-between space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <div class="flex justify-between items-start mb-2 gap-2">
-                            <span class="bg-emerald-100 text-emerald-800 text-[10px] md:text-[11px] font-semibold px-2.5 py-0.5 rounded-full">${p.asignatura}</span>
-                            <span class="text-[10px] md:text-[11px] px-2 py-0.5 rounded-md ${p.estado === 'aprobado' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700 font-bold'}">${p.estado.toUpperCase()}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-sm md:text-base mb-1 leading-snug">${p.titulo}</h3>
-                        <p class="text-xs text-slate-500 mb-3 leading-relaxed">${p.descripcion}</p>
-                        <p class="text-[10px] md:text-[11px] text-slate-400"><i class="fa-solid fa-user-pen mr-1"></i> ${p.autor || 'Anónimo'}</p>
-                    </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
-                        <a href="${p.url}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center space-x-1 shadow-xs">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            <span>Ver Presentación</span>
-                        </a>
-                        ${esAdmin ? `
-                            <div class="flex space-x-1">
-                                ${p.estado === 'pendiente' ? `<button onclick="cambiarEstado('${p.id}', 'aprobado')" class="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg text-xs transition">Aprobar</button>` : ''}
-                                <button onclick="eliminarPublicacion('${p.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        ` : ''}
+    <div>
+    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Subir Fotografías (Máx. 1 MB en total)</label>
+    <input type="file" id="input-media-foto" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
+</div>
+                    <div>
+                        <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Subir Video corto</label>
+                        <input type="file" id="input-media-video" accept="video/mp4,video/webm" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
                     </div>
                 </div>
-            `).join('');
-        }
 
-        window.filtrarAsignatura = function(asignatura) {
-            filtroAsignaturaActual = asignatura;
-            modoAdminVisualizacion = false;
-            renderizarPublicaciones();
-        }
+                <button type="submit" id="btn-publicar-exp" class="w-full text-white py-2.5 rounded-xl text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
+                    Publicar Experiencia
+                </button>
+            </form>
+        </div>
+    </div>
 
-        window.buscarMateriales = function() {
-            renderizarPublicaciones();
-        }
+    <!-- Contenedor de notificaciones flotantes -->
+    <div id="contenedor-notificaciones" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-        window.cambiarVistaAdmin = function() {
-            modoAdminVisualizacion = !modoAdminVisualizacion;
-            renderizarPublicaciones();
-        }
+    <style>
+        input[type=file]::file-selector-button { background-color:#F3ECDC; color:#1F3B2C; }
+        input[type=file]::file-selector-button:hover { background-color:#E7DFC9; }
+    </style>
 
-        window.cambiarEstado = async function(id, nuevoEstado) {
-            try {
-                await updateDoc(doc(db, "publicaciones", id), { estado: nuevoEstado });
-                alert("Estado actualizado con éxito.");
-                cargarPublicaciones();
-            } catch (error) {
-                alert("Error al actualizar: " + error.message);
-            }
-        }
-
-        window.eliminarPublicacion = async function(id) {
-            if (confirm("¿Estás seguro de eliminar este material?")) {
-                try {
-                    await deleteDoc(doc(db, "publicaciones", id));
-                    alert("Material eliminado.");
-                    cargarPublicaciones();
-                } catch (error) {
-                    alert("Error al eliminar: " + error.message);
-                }
-            }
-        }
-    </script>
+    <!-- CARGA DEL SCRIPT PRINCIPAL -->
+    <script type="module" src="app.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
