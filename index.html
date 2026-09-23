@@ -40,13 +40,11 @@
                     <p class="text-[10px] md:text-xs" style="color:#C9D9CE;">Comunidad y materiales didácticos</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-2 md:space-x-3" id="auth-nav-container">
-                <!-- Se llena dinámicamente según sesión -->
-            </div>
+            <div class="flex items-center space-x-2 md:space-x-3" id="auth-nav-container"></div>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL (BLOQUEADO SI NO HAY SESIÓN) -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main id="contenido-foro" class="max-w-3xl mx-auto px-4 py-4 md:py-6 flex-grow w-full space-y-6 hidden">
 
         <!-- BARRA DE ACCIÓN: CREAR PUBLICACIÓN -->
@@ -146,14 +144,20 @@
                     <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">¿Qué deseas compartir en el foro?</label>
                     <textarea id="sub-desc" rows="3" required placeholder="Escribe tu aportación, descripción o consigna..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;"></textarea>
                 </div>
+                <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Enlace de Google Drive (Opcional)</label>
+                    <input type="url" id="sub-drive" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 transition bg-[#FBF7EE] border-[#E7DFC9]" style="--tw-ring-color:#2F6B4F;">
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Adjuntar imágenes (máx. 1 MB en total)</label>
-    <input type="file" id="sub-imagen" accept="image/*" multiple class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
-</div>
+                        <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Adjuntar imágenes (máx. 1 MB en total)</label>
+                        <input type="file" id="sub-imagen" accept="image/*" multiple onchange="mostrarPreviewImagenes()" class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
+                        <div id="preview-imagenes-container" class="mt-2 flex flex-wrap gap-2"></div>
+                    </div>
                     <div>
                         <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Archivo PDF / Word</label>
-                        <input type="file" id="sub-archivo" accept=".pdf,.doc,.docx,.ppt,.pptx" class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
+                        <input type="file" id="sub-archivo" accept=".pdf,.doc,.docx,.ppt,.pptx" onchange="mostrarPreviewArchivo()" class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="color:#6B6255;">
+                        <div id="preview-archivo-container" class="mt-2"></div>
                     </div>
                 </div>
                 <div>
@@ -191,19 +195,25 @@
                 </div>
 
                 <div>
+                    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Enlace de Google Drive con materiales o fotos extra (Opcional)</label>
+                    <input type="url" id="input-link-drive" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                </div>
+
+                <div>
                     <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Tu experiencia</label>
                     <textarea id="input-texto-experiencia" rows="3" required placeholder="Describe tus vivencias, retos y anécdotas dando clases..." class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-    <div>
-    <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Subir Fotografías (Máx. 1 MB en total)</label>
-    <input type="file" id="input-media-foto" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
-</div>
+                        <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Subir Fotografías (Máx. 1 MB en total)</label>
+                        <input type="file" id="input-media-foto" accept="image/*" multiple onchange="mostrarPreviewFotosExp()" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
+                        <div id="preview-fotos-exp-container" class="mt-2 flex flex-wrap gap-2"></div>
+                    </div>
                     <div>
                         <label class="block text-[12px] font-medium mb-1" style="color:#6B6255;">Subir Video corto</label>
-                        <input type="file" id="input-media-video" accept="video/mp4,video/webm" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
+                        <input type="file" id="input-media-video" accept="video/mp4,video/webm" onchange="mostrarPreviewVideoExp()" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold transition" style="background-color:#FBF7EE;">
+                        <div id="preview-video-exp-container" class="mt-2"></div>
                     </div>
                 </div>
 
@@ -214,7 +224,6 @@
         </div>
     </div>
 
-    <!-- Contenedor de notificaciones flotantes -->
     <div id="contenedor-notificaciones" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
     <style>
@@ -222,7 +231,6 @@
         input[type=file]::file-selector-button:hover { background-color:#E7DFC9; }
     </style>
 
-    <!-- CARGA DEL SCRIPT PRINCIPAL -->
     <script type="module" src="app.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>

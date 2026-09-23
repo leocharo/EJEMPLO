@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, deleteField, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-let listaGlobalAsignaturas = ['Español', 'Matemáticas', 'Ciencias']; // Respaldo inicial
+let listaGlobalAsignaturas = ['Español', 'Matemáticas', 'Ciencias'];
 
 const firebaseConfig = {
     apiKey: "AIzaSyBdgXatY1zLKmkP4VDkvIz6xfzixDVNE5I",
@@ -25,10 +25,9 @@ let listaGlobalExperiencias = [];
 let filtroAsignaturaActual = 'Todas';
 let modoAdminVisualizacion = false;
 
-// --- ESTADO DE COMENTARIOS Y CARRUSEL ---
 let comentariosCache = {};              
 let panelesComentariosAbiertos = new Set(); 
-let indicesCarrusel = {}; // Almacena el índice de la diapositiva actual para cada publicación o experiencia
+let indicesCarrusel = {};
 
 const convertirArchivoABase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -68,7 +67,6 @@ onAuthStateChanged(auth, async (user) => {
                 esAdmin = false;
             }
         } catch (error) {
-            console.error("Error al obtener datos del usuario:", error);
             esAdmin = false;
         }
         
@@ -120,7 +118,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// --- SISTEMA DE NOTIFICACIONES FLOTANTES ---
 window.mostrarNotificacion = function(mensaje, tipo = 'exito') {
     const contenedor = document.getElementById('contenedor-notificaciones');
     if (!contenedor) return;
@@ -147,7 +144,83 @@ window.mostrarNotificacion = function(mensaje, tipo = 'exito') {
     }, 3500);
 }
 
-// --- CONTROL DE MODALES ---
+// Vistas previas y limpieza de archivos adjuntos
+window.mostrarPreviewImagenes = function() {
+    const input = document.getElementById('sub-imagen');
+    const contenedor = document.getElementById('preview-imagenes-container');
+    contenedor.innerHTML = '';
+    if (input.files.length > 0) {
+        contenedor.innerHTML = `
+            <div class="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs border border-slate-200 w-full">
+                <span class="truncate text-slate-700"><i class="fa-solid fa-images mr-1 text-emerald-700"></i> ${input.files.length} imagen(es) seleccionada(s)</span>
+                <button type="button" onclick="quitarImagenes()" class="text-red-500 hover:text-red-700 font-bold ml-2 px-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        `;
+    }
+}
+
+window.quitarImagenes = function() {
+    document.getElementById('sub-imagen').value = '';
+    document.getElementById('preview-imagenes-container').innerHTML = '';
+}
+
+window.mostrarPreviewArchivo = function() {
+    const input = document.getElementById('sub-archivo');
+    const contenedor = document.getElementById('preview-archivo-container');
+    contenedor.innerHTML = '';
+    if (input.files[0]) {
+        contenedor.innerHTML = `
+            <div class="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs border border-slate-200 w-full">
+                <span class="truncate text-slate-700"><i class="fa-solid fa-file-pdf mr-1 text-emerald-700"></i> ${input.files[0].name}</span>
+                <button type="button" onclick="quitarArchivo()" class="text-red-500 hover:text-red-700 font-bold ml-2 px-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        `;
+    }
+}
+
+window.quitarArchivo = function() {
+    document.getElementById('sub-archivo').value = '';
+    document.getElementById('preview-archivo-container').innerHTML = '';
+}
+
+window.mostrarPreviewFotosExp = function() {
+    const input = document.getElementById('input-media-foto');
+    const contenedor = document.getElementById('preview-fotos-exp-container');
+    contenedor.innerHTML = '';
+    if (input.files.length > 0) {
+        contenedor.innerHTML = `
+            <div class="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs border border-slate-200 w-full">
+                <span class="truncate text-slate-700"><i class="fa-solid fa-images mr-1 text-emerald-700"></i> ${input.files.length} foto(s) seleccionada(s)</span>
+                <button type="button" onclick="quitarFotosExp()" class="text-red-500 hover:text-red-700 font-bold ml-2 px-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        `;
+    }
+}
+
+window.quitarFotosExp = function() {
+    document.getElementById('input-media-foto').value = '';
+    document.getElementById('preview-fotos-exp-container').innerHTML = '';
+}
+
+window.mostrarPreviewVideoExp = function() {
+    const input = document.getElementById('input-media-video');
+    const contenedor = document.getElementById('preview-video-exp-container');
+    contenedor.innerHTML = '';
+    if (input.files[0]) {
+        contenedor.innerHTML = `
+            <div class="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs border border-slate-200 w-full">
+                <span class="truncate text-slate-700"><i class="fa-solid fa-video mr-1 text-emerald-700"></i> ${input.files[0].name}</span>
+                <button type="button" onclick="quitarVideoExp()" class="text-red-500 hover:text-red-700 font-bold ml-2 px-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        `;
+    }
+}
+
+window.quitarVideoExp = function() {
+    document.getElementById('input-media-video').value = '';
+    document.getElementById('preview-video-exp-container').innerHTML = '';
+}
+
 window.abrirModalSubir = function() {
     if (!usuarioActual) {
         mostrarNotificacion("Debes iniciar sesión para compartir publicaciones.", "error");
@@ -180,13 +253,13 @@ window.cerrarSesion = async function() {
     window.location.href = 'inicio_sesion.html';
 }
 
-// --- SUBIR PUBLICACIÓN (Soporta múltiples imágenes) ---
 window.subirPublicacion = async function(e) {
     e.preventDefault();
     if (!usuarioActual) return;
 
     const imagenFiles = document.getElementById('sub-imagen').files;
     const archivoFile = document.getElementById('sub-archivo').files[0];
+    const enlaceDrive = document.getElementById('sub-drive').value.trim();
     const opcionVisibilidad = document.getElementById('sub-visibilidad-autor').value;
 
     const unMegabyte = 1024 * 1024;
@@ -249,6 +322,7 @@ window.subirPublicacion = async function(e) {
             imagenesUrls: imagenesUrls,
             archivoUrl,
             archivoNombre,
+            enlaceDrive,
             autor: usuarioActual.email,
             nombreAutor: nombreAutorFinal,
             fotoUrlAutor: fotoUrlAutor,
@@ -260,8 +334,9 @@ window.subirPublicacion = async function(e) {
         cerrarModalSubir();
         document.getElementById('sub-titulo').value = '';
         document.getElementById('sub-desc').value = '';
-        document.getElementById('sub-imagen').value = '';
-        document.getElementById('sub-archivo').value = '';
+        document.getElementById('sub-drive').value = '';
+        quitarImagenes();
+        quitarArchivo();
         cargarPublicaciones();
     } catch (error) {
         mostrarNotificacion("Error al guardar contenido: " + error.message, "error");
@@ -271,7 +346,6 @@ window.subirPublicacion = async function(e) {
     }
 }
 
-// --- ASIGNATURAS ---
 async function cargarAsignaturasDinamicas() {
     try {
         const querySnapshot = await getDocs(collection(db, "asignaturas"));
@@ -369,19 +443,38 @@ window.eliminarAsignaturaAdmin = async function(id, nombreMateria) {
     }
 }
 
-// --- CARRUSEL MULTIMEDIA ESTILO INSTAGRAM ---
 function renderizarCarruselMultimedia(coleccion, itemId, multimediaArray) {
     if (!multimediaArray || multimediaArray.length === 0) return '';
     
+    let items = Array.isArray(multimediaArray) ? multimediaArray : [multimediaArray];
+    if (items.length === 0) return '';
+
+    if (items.length > 2) {
+        return `
+        <div class="relative rounded-xl overflow-x-auto flex gap-3 p-2 bg-slate-900 max-h-96 snap-x scrollbar-thin">
+            ${items.map((elementoActual, idx) => {
+                const esVideo = typeof elementoActual === 'string' && (elementoActual.includes('data:video') || elementoActual.endsWith('.mp4') || elementoActual.endsWith('.webm'));
+                return `
+                <div class="shrink-0 w-80 max-h-96 flex justify-center items-center snap-center rounded-lg overflow-hidden bg-black/40">
+                    ${esVideo ? `
+                        <video controls class="w-full max-h-96 object-contain">
+                            <source src="${elementoActual}" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                    ` : `
+                        <img src="${elementoActual}" class="object-contain w-full max-h-96" alt="Media adjunta ${idx + 1}">
+                    `}
+                </div>`;
+            }).join('')}
+        </div>
+        `;
+    }
+
     const key = coleccion + '_' + itemId;
     if (indicesCarrusel[key] === undefined) {
         indicesCarrusel[key] = 0;
     }
     const idxActual = indicesCarrusel[key];
-
-    let items = Array.isArray(multimediaArray) ? multimediaArray : [multimediaArray];
-    if (items.length === 0) return '';
-
     const elementoActual = items[idxActual];
     const esVideo = typeof elementoActual === 'string' && (elementoActual.includes('data:video') || elementoActual.endsWith('.mp4') || elementoActual.endsWith('.webm'));
 
@@ -432,7 +525,6 @@ window.cambiarSlide = function(coleccion, itemId, direccion, totalItems) {
     rerenderizar(coleccion);
 }
 
-// --- BARRA SOCIAL (ME GUSTA Y COMENTARIOS) ---
 function obtenerItem(coleccion, id) {
     const lista = coleccion === 'publicaciones' ? listaGlobalPublicaciones : listaGlobalExperiencias;
     return lista.find(x => x.id === id);
@@ -489,7 +581,7 @@ function renderizarBarraSocial(coleccion, item) {
             <div id="lista-comentarios-${coleccion}-${item.id}" class="space-y-2">
                 ${comentarios === undefined ? `<p class="text-[11px] text-center py-1" style="color:#9C927F;">Cargando comentarios...</p>` : renderizarListaComentarios(coleccion, item.id, comentarios)}
             </div>
-        </div>` : ''}
+        ` : ''}
     </div>
     `;
 }
@@ -626,7 +718,6 @@ window.eliminarComentario = async function(coleccion, id, comentarioId) {
     }
 }
 
-// --- CARGAR Y RENDERIZAR PUBLICACIONES ---
 async function cargarPublicaciones() {
     const contenedor = document.getElementById('contenedor-publicaciones');
     if (!contenedor) return;
@@ -688,7 +779,6 @@ window.renderizarPublicaciones = function() {
                 <p class="text-xs md:text-sm text-slate-600 leading-relaxed">${p.descripcion}</p>
             </div>
 
-            <!-- Carrusel multimedia de imágenes -->
             ${p.imagenesUrls && p.imagenesUrls.length > 0 ? 
                 renderizarCarruselMultimedia('publicaciones', p.id, p.imagenesUrls) : 
                 (p.imagenUrl ? renderizarCarruselMultimedia('publicaciones', p.id, [p.imagenUrl]) : '')
@@ -702,6 +792,18 @@ window.renderizarPublicaciones = function() {
                     </div>
                     <a href="${p.archivoUrl}" download="${p.archivoNombre || 'documento'}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition shrink-0">
                         Descargar
+                    </a>
+                </div>
+            ` : ''}
+
+            ${p.enlaceDrive ? `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 overflow-hidden">
+                        <i class="fa-brands fa-google-drive text-emerald-600 text-lg shrink-0"></i>
+                        <span class="text-xs font-medium text-slate-700 truncate">Enlace de Google Drive</span>
+                    </div>
+                    <a href="${p.enlaceDrive}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition shrink-0">
+                        Abrir Drive
                     </a>
                 </div>
             ` : ''}
@@ -751,13 +853,13 @@ window.eliminarPublicacion = async function(id) {
     }
 }
 
-// --- GUARDAR Y CARGAR EXPERIENCIAS DE PRÁCTICAS ---
 window.guardarExperienciaPractica = async function(e) {
     e.preventDefault();
     if (!usuarioActual) return;
 
     const nombreEscuela = document.getElementById('input-nombre-escuela').value;
-    const linkMapa = document.getElementById('input-link-mapa').value;
+    const linkMapa = document.getElementById('input-link-mapa').value.trim();
+    const enlaceDrive = document.getElementById('input-link-drive').value.trim();
     const textoExperiencia = document.getElementById('input-texto-experiencia').value;
     const fotoFiles = document.getElementById('input-media-foto').files;
     const videoFile = document.getElementById('input-media-video').files[0];
@@ -795,6 +897,7 @@ window.guardarExperienciaPractica = async function(e) {
         await addDoc(collection(db, "experiencias_practicas"), {
             escuela: nombreEscuela,
             linkMapa: linkMapa,
+            enlaceDrive,
             experiencia: textoExperiencia,
             fotosUrls: fotosBase64,
             videoUrl: videoBase64,
@@ -807,9 +910,10 @@ window.guardarExperienciaPractica = async function(e) {
         
         document.getElementById('input-nombre-escuela').value = '';
         document.getElementById('input-link-mapa').value = '';
+        document.getElementById('input-link-drive').value = '';
         document.getElementById('input-texto-experiencia').value = '';
-        document.getElementById('input-media-foto').value = '';
-        document.getElementById('input-media-video').value = '';
+        quitarFotosExp();
+        quitarVideoExp();
         cargarExperienciasPracticas();
     } catch (error) {
         mostrarNotificacion("Error al publicar: " + error.message, "error");
@@ -837,6 +941,25 @@ async function cargarExperienciasPracticas() {
     }
 }
 
+function formatearFechaAmigable(timestamp) {
+    if (!timestamp) return "Hace un momento";
+    const fecha = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const ahora = new Date();
+    const segundos = Math.floor((ahora - fecha) / 1000);
+
+    if (segundos < 60) return "Hace unos momentos";
+    const minutos = Math.floor(segundos / 60);
+    if (minutos < 60) return `Hace ${minutos} ${minutos === 1 ? 'minuto' : 'minutos'}`;
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `Hace ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+    const dias = Math.floor(horas / 24);
+    if (dias < 30) return `Hace ${dias} ${dias === 1 ? 'día' : 'días'}`;
+    const meses = Math.floor(dias / 30);
+    if (meses < 12) return `Hace ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+    const anios = Math.floor(meses / 12);
+    return `Hace ${anios} ${anios === 1 ? 'año' : 'años'}`;
+}
+
 function renderizarExperiencias() {
     const contenedor = document.getElementById('contenedor-experiencias');
     if (!contenedor) return;
@@ -854,22 +977,30 @@ function renderizarExperiencias() {
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-700">${e.escuela}</h4>
-                        <span class="text-[10px] text-slate-400">${e.autorEmail}</span>
+                        <h4 class="text-xs font-bold text-slate-800">${e.autorEmail || 'Estudiante'}</h4>
+                        <p class="text-[10px] text-slate-400">
+                            <span>${e.escuela}</span> &bull; <span>${formatearFechaAmigable(e.fecha)}</span>
+                        </p>
                     </div>
                 </div>
-                ${e.linkMapa ? `
-                    <a href="${e.linkMapa}" target="_blank" class="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2.5 py-0.5 rounded-full transition flex items-center gap-1 shrink-0">
-                        <i class="fa-solid fa-map-location-dot"></i> Ver ubicación
-                    </a>
-                ` : ''}
             </div>
 
             <div>
                 <p class="text-xs md:text-sm text-slate-600 leading-relaxed">${e.experiencia}</p>
             </div>
 
-            <!-- Carrusel multimedia para experiencias -->
+            ${e.linkMapa ? `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 overflow-hidden">
+                        <i class="fa-solid fa-map-location-dot text-emerald-600 text-lg shrink-0"></i>
+                        <span class="text-xs font-medium text-slate-700 truncate">Ubicación de la Telesecundaria</span>
+                    </div>
+                    <a href="${e.linkMapa}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition shrink-0">
+                        Ver en Mapa
+                    </a>
+                </div>
+            ` : ''}
+
             ${e.fotosUrls && e.fotosUrls.length > 0 ? 
                 renderizarCarruselMultimedia('experiencias_practicas', e.id, e.fotosUrls) : 
                 (e.fotoUrl ? renderizarCarruselMultimedia('experiencias_practicas', e.id, [e.fotoUrl]) : '')
@@ -881,6 +1012,18 @@ function renderizarExperiencias() {
                         <source src="${e.videoUrl}" type="video/mp4">
                         Tu navegador no soporta videos.
                     </video>
+                </div>
+            ` : ''}
+
+            ${e.enlaceDrive ? `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 overflow-hidden">
+                        <i class="fa-brands fa-google-drive text-emerald-600 text-lg shrink-0"></i>
+                        <span class="text-xs font-medium text-slate-700 truncate">Enlace de Google Drive</span>
+                    </div>
+                    <a href="${e.enlaceDrive}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition shrink-0">
+                        Abrir Drive
+                    </a>
                 </div>
             ` : ''}
 

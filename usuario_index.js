@@ -19,20 +19,11 @@ const db = getFirestore(app);
 let usuarioActual = null;
 let misPubsCache = [];
 let misExpsCache = [];
+let listaGlobalAsignaturas = ['Español', 'Matemáticas', 'Ciencias'];
 
-// --- SISTEMA DE REACCIONES Y COMENTARIOS PARA EL PERFIL ---
-const TIPOS_REACCION = {
-    like:  { emoji: '👍', label: 'Me gusta' },
-    love:  { emoji: '❤️', label: 'Me encanta' },
-    haha:  { emoji: '😂', label: 'Me divierte' },
-    wow:   { emoji: '😮', label: 'Me sorprende' },
-    sad:   { emoji: '😢', label: 'Me entristece' },
-    angry: { emoji: '😡', label: 'Me enoja' }
-};
 let comentariosCache = {};
 let panelesComentariosAbiertos = new Set();
-let selectoresReaccionAbiertos = new Set();
-let temporizadorPulsacion = null;
+let indicesCarrusel = {};
 
 window.mostrarNotificacion = function(mensaje, tipo = 'exito') {
     const contenedor = document.getElementById('contenedor-notificaciones');
@@ -65,6 +56,7 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         usuarioActual = user;
         document.getElementById('perfil-email-display').innerText = user.email;
+        await cargarAsignaturasDinamicas();
         await cargarDatosPerfil(user.uid);
         await cargarMisPublicaciones(user.email);
         await cargarMisExperiencias(user.email);
@@ -72,6 +64,21 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = 'inicio_sesion.html';
     }
 });
+
+async function cargarAsignaturasDinamicas() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "asignaturas"));
+        let asignaturasFirestore = [];
+        querySnapshot.forEach((docSnap) => {
+            asignaturasFirestore.push(docSnap.data().nombre);
+        });
+        if (asignaturasFirestore.length > 0) {
+            listaGlobalAsignaturas = asignaturasFirestore;
+        }
+    } catch (error) {
+        console.error("Error al cargar asignaturas:", error);
+    }
+}
 
 async function cargarDatosPerfil(uid) {
     try {
@@ -141,6 +148,89 @@ window.guardarPerfil = async function(e) {
     }
 }
 
+// --- VISOR MULTIMEDIA CON SCROLL AUTOMÁTICO PARA EL PERFIL ---
+function renderizarCarruselMultimediaPerfil(coleccion, itemId, multimediaArray) {
+    if (!multimediaArray || multimediaArray.length === 0) return '';
+    
+    let items = Array.isArray(multimediaArray) ? multimediaArray : [multimediaArray];
+    if (items.length === 0) return '';
+
+    if (items.length > 2) {
+        return `
+        <div class="relative rounded-xl overflow-x-auto flex gap-3 p-2 bg-slate-900 max-h-96 snap-x scrollbar-thin">
+            ${items.map((elementoActual, idx) => {
+                const esVideo = typeof elementoActual === 'string' && (elementoActual.includes('data:video') || elementoActual.endsWith('.mp4') || elementoActual.endsWith('.webm'));
+                return `
+                <div class="shrink-0 w-80 max-h-96 flex justify-center items-center snap-center rounded-lg overflow-hidden bg-black/40">
+                    ${esVideo ? `
+                        <video controls class="w-full max-h-96 object-contain">
+                            <source src="${elementoActual}" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                    ` : `
+                        <img src="${elementoActual}" class="object-contain w-full max-h-96" alt="Media adjunta ${idx + 1}">
+                    `}
+                </div>`;
+            }).join('')}
+        </div>
+        `;
+    }
+
+    const key = coleccion + '_' + itemId;
+    if (indicesCarrusel[key] === undefined) {
+        indicesCarrusel[key] = 0;
+    }
+    const idxActual = indicesCarrusel[key];
+    const elementoActual = items[idxActual];
+    const esVideo = typeof elementoActual === 'string' && (elementoActual.includes('data:video') || elementoActual.endsWith('.mp4') || elementoActual.endsWith('.webm'));
+
+    return `
+    <div class="relative rounded-xl overflow-hidden border border-slate-100 bg-slate-900 flex justify-center items-center max-h-96 group">
+        <div class="w-full flex justify-center max-h-96">
+            ${esVideo ? `
+                <video controls class="w-full max-h-96 object-contain">
+                    <source src="${elementoActual}" type="video/mp4">
+                    Tu navegador no soporta videos.
+                </video>
+            ` : `
+                <img src="${elementoActual}" class="object-contain w-full max-h-96" alt="Media adjunta">
+            `}
+        </div>
+
+        ${items.length > 1 && idxActual > 0 ? `
+            <button type="button" onclick="cambiarSlidePerfil('${coleccion}', '${itemId}', -1,${items.length})" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition opacity-80 group-hover:opacity-100 z-10">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+        ` : ''}
+
+        ${items.length > 1 && idxActual < items.length - 1 ? `
+            <button type="button" onclick="cambiarSlidePerfil('${coleccion}', '${itemId}', 1,${items.length})" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition opacity-80 group-hover:opacity-100 z-10">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        ` : ''}
+
+        ${items.length > 1 ? `
+            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-full z-10">
+                ${items.map((_, i) => `
+                    <span class="w-1.5 h-1.5 rounded-full transition-all ${i === idxActual ? 'bg-white w-2.5' : 'bg-white/50'}"></span>
+                `).join('')}
+            </div>
+        ` : ''}
+    </div>
+    `;
+}
+
+window.cambiarSlidePerfil = function(coleccion, itemId, direccion, totalItems) {
+    const key = coleccion + '_' + itemId;
+    if (indicesCarrusel[key] === undefined) indicesCarrusel[key] = 0;
+    
+    indicesCarrusel[key] += direccion;
+    if (indicesCarrusel[key] < 0) indicesCarrusel[key] = 0;
+    if (indicesCarrusel[key] >= totalItems) indicesCarrusel[key] = totalItems - 1;
+
+    rerenderizarPerfil(coleccion);
+}
+
 // --- CARGAR MIS PUBLICACIONES ---
 async function cargarMisPublicaciones(emailUsuario) {
     const contenedor = document.getElementById('contenedor-mis-publicaciones');
@@ -179,21 +269,117 @@ window.renderizarMisPublicaciones = function() {
                 <h4 class="font-bold text-slate-800 text-sm mb-1">${p.titulo}</h4>
                 <p class="text-xs text-slate-600 leading-relaxed">${p.descripcion}</p>
             </div>
-            ${p.imagenUrl ? `
-                <div class="rounded-xl overflow-hidden border max-h-48 bg-slate-50 flex justify-center">
-                    <img src="${p.imagenUrl}" class="object-cover w-full max-h-48" alt="Imagen adjunta">
+
+            ${p.imagenesUrls && p.imagenesUrls.length > 0 ? 
+                renderizarCarruselMultimediaPerfil('publicaciones', p.id, p.imagenesUrls) : 
+                (p.imagenUrl ? renderizarCarruselMultimediaPerfil('publicaciones', p.id, [p.imagenUrl]) : '')
+            }
+
+            ${p.archivoUrl ? `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 overflow-hidden">
+                        <i class="fa-solid fa-file-arrow-down text-emerald-600 text-lg shrink-0"></i>
+                        <span class="text-xs font-medium text-slate-700 truncate">${p.archivoNombre || 'Documento adjunto'}</span>
+                    </div>
+                    <a href="${p.archivoUrl}" download="${p.archivoNombre || 'documento'}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition shrink-0">
+                        Descargar
+                    </a>
                 </div>
             ` : ''}
             
             ${renderizarBarraSocialPerfil('publicaciones', p)}
 
-            <div class="flex justify-end pt-2 border-t" style="border-color:#F0EADA;">
+            <div class="flex justify-end space-x-2 pt-2 border-t" style="border-color:#F0EADA;">
+                <button onclick="abrirModalEditar('${p.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1 rounded-lg text-xs transition">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
+                </button>
                 <button onclick="eliminarMiPublicacion('${p.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs transition">
-                    <i class="fa-solid fa-trash mr-1"></i> Eliminar Publicación
+                    <i class="fa-solid fa-trash mr-1"></i> Eliminar
                 </button>
             </div>
         </div>
     `).join('');
+}
+
+// --- FUNCIONES DE EDICIÓN DE PUBLICACIONES ---
+window.abrirModalEditar = function(id) {
+    const pub = misPubsCache.find(p => p.id === id);
+    if (!pub) return;
+
+    document.getElementById('edit-pub-id').value = pub.id;
+    document.getElementById('edit-titulo').value = pub.titulo || '';
+    document.getElementById('edit-desc').value = pub.descripcion || '';
+
+    // Cargar selector de asignaturas dinámicamente
+    const selectAsignatura = document.getElementById('edit-asignatura');
+    selectAsignatura.innerHTML = listaGlobalAsignaturas.map(mat => `
+        <option value="${mat}" ${pub.asignatura === mat ? 'selected' : ''}>${mat}</option>
+    `).join('');
+
+    document.getElementById('modal-editar-pub').classList.remove('hidden');
+}
+
+window.cerrarModalEditar = function() {
+    document.getElementById('modal-editar-pub').classList.add('hidden');
+}
+
+window.actualizarPublicacion = async function(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-pub-id').value;
+    const titulo = document.getElementById('edit-titulo').value.trim();
+    const asignatura = document.getElementById('edit-asignatura').value;
+    const descripcion = document.getElementById('edit-desc').value.trim();
+    const imagenFiles = document.getElementById('edit-imagenes').files;
+    const archivoFile = document.getElementById('edit-archivo').files[0];
+
+    if (!id || !titulo || !descripcion) return;
+
+    const unMegabyte = 1024 * 1024;
+    let datosActualizacion = { titulo, asignatura, descripcion };
+
+    try {
+        if (imagenFiles.length > 0) {
+            let nuevasImgs = [];
+            for (let file of imagenFiles) {
+                if (file.size > unMegabyte) {
+                    mostrarNotificacion(`La imagen "${file.name}" supera 1 MB.`, "error");
+                    return;
+                }
+                const b64 = await convertirArchivoABase64(file);
+                nuevasImgs.push(b64);
+            }
+            datosActualizacion.imagenesUrls = nuevasImgs;
+        }
+
+        if (archivoFile) {
+            if (archivoFile.size > unMegabyte) {
+                mostrarNotificacion("El archivo adjunto es muy pesado (Máx 1 MB).", "error");
+                return;
+            }
+            datosActualizacion.archivoUrl = await convertirArchivoABase64(archivoFile);
+            datosActualizacion.archivoNombre = archivoFile.name;
+        }
+
+        await updateDoc(doc(db, "publicaciones", id), datosActualizacion);
+
+        const pub = misPubsCache.find(p => p.id === id);
+        if (pub) {
+            pub.titulo = titulo;
+            pub.asignatura = asignatura;
+            pub.descripcion = descripcion;
+            if (datosActualizacion.imagenesUrls) pub.imagenesUrls = datosActualizacion.imagenesUrls;
+            if (datosActualizacion.archivoUrl) {
+                pub.archivoUrl = datosActualizacion.archivoUrl;
+                pub.archivoNombre = datosActualizacion.archivoNombre;
+            }
+        }
+
+        mostrarNotificacion("Publicación actualizada con éxito.");
+        cerrarModalEditar();
+        renderizarMisPublicaciones();
+    } catch (error) {
+        mostrarNotificacion("Error al actualizar: " + error.message, "error");
+    }
 }
 
 // --- CARGAR MIS EXPERIENCIAS ---
@@ -247,11 +433,10 @@ window.renderizarMisExperiencias = function() {
                 <p class="text-xs md:text-sm text-slate-600 leading-relaxed">${e.experiencia}</p>
             </div>
 
-            ${e.fotoUrl ? `
-                <div class="rounded-xl overflow-hidden border max-h-48 bg-slate-50 flex justify-center">
-                    <img src="${e.fotoUrl}" class="object-cover w-full max-h-48" alt="Foto práctica">
-                </div>
-            ` : ''}
+            ${e.fotosUrls && e.fotosUrls.length > 0 ? 
+                renderizarCarruselMultimediaPerfil('experiencias_practicas', e.id, e.fotosUrls) : 
+                (e.fotoUrl ? renderizarCarruselMultimediaPerfil('experiencias_practicas', e.id, [e.fotoUrl]) : '')
+            }
 
             ${renderizarBarraSocialPerfil('experiencias_practicas', e)}
 
@@ -264,7 +449,6 @@ window.renderizarMisExperiencias = function() {
     `).join('');
 }
 
-// --- BARRA SOCIAL REUTILIZADA PARA PERFIL ---
 function obtenerItemPerfil(coleccion, id) {
     if (coleccion === 'publicaciones') return misPubsCache.find(x => x.id === id);
     return misExpsCache.find(x => x.id === id);
@@ -323,16 +507,6 @@ function renderizarBarraSocialPerfil(coleccion, item) {
     `;
 }
 
-window.mostrarSelectorReaccionPerfil = function(coleccion, id) {
-    const el = document.getElementById(`selector-reaccion-perfil-${coleccion}-${id}`);
-    if (el) el.classList.remove('hidden');
-}
-
-window.ocultarSelectorReaccionPerfil = function(coleccion, id) {
-    const el = document.getElementById(`selector-reaccion-perfil-${coleccion}-${id}`);
-    if (el) el.classList.add('hidden');
-}
-
 function renderizarListaComentariosPerfil(coleccion, id, comentarios) {
     if (comentarios.length === 0) return `<p class="text-[11px] text-center py-1" style="color:#9C927F;">Sé el primero en comentar.</p>`;
     return comentarios.map(c => `
@@ -369,30 +543,6 @@ window.toggleReaccionRapidaPerfil = async function(coleccion, id) {
     } catch (error) {
         mostrarNotificacion("Error al reaccionar: " + error.message, "error");
     }
-}
-
-window.seleccionarReaccionPerfil = async function(coleccion, id, tipo) {
-    if (!usuarioActual) return;
-    const item = obtenerItemPerfil(coleccion, id);
-    if (!item) return;
-    const uid = usuarioActual.uid;
-    item.reacciones = item.reacciones || {};
-    item.reacciones[uid] = tipo;
-    selectoresReaccionAbiertos.delete(coleccion + '_' + id);
-
-    try {
-        await updateDoc(doc(db, coleccion, id), { [`reacciones.${uid}`]: tipo });
-        rerenderizarPerfil(coleccion);
-    } catch (error) {
-        mostrarNotificacion("Error al reaccionar: " + error.message, "error");
-    }
-}
-
-window.toggleSelectorReaccionPerfil = function(coleccion, id) {
-    const key = coleccion + '_' + id;
-    if (selectoresReaccionAbiertos.has(key)) selectoresReaccionAbiertos.delete(key);
-    else selectoresReaccionAbiertos.add(key);
-    rerenderizarPerfil(coleccion);
 }
 
 window.toggleComentariosPerfil = async function(coleccion, id) {

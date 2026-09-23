@@ -27,21 +27,20 @@
     <div class="min-h-screen w-full flex items-center justify-center p-4 md:p-6">
         <div class="w-full max-w-4xl bg-white rounded-[28px] shadow-xl border border-[#E7DFC9] overflow-hidden grid grid-cols-1 md:grid-cols-[1.1fr_1.4fr]">
 
-           <!-- PANEL DE MARCA -->
-<div class="flex flex-col justify-between p-6 md:p-9 relative" style="background-color:#1F3B2C; color:#FBF7EE;">
+           <!-- PANEL DE MARCA (Visible en celular y computadora) -->
+           <div class="flex flex-col justify-between p-6 md:p-9 relative" style="background-color:#1F3B2C; color:#FBF7EE;">
                 <div>
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-8" style="background-color:#FBF7EE; color:#1F3B2C;">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-6 md:mb-8" style="background-color:#FBF7EE; color:#1F3B2C;">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <h2 class="font-display text-2xl leading-snug mb-3">Un lugar para compartir<br>lo que enseñas.</h2>
-                    <p class="text-sm leading-relaxed" style="color:#CBDACF;">Planeaciones, fichas y materiales de telesecundarias de toda la red, reunidos por docentes para docentes.</p>
+                    <h2 class="font-display text-xl md:text-2xl leading-snug mb-3">Un lugar para compartir<br>lo que enseñas.</h2>
+                    <p class="text-xs md:text-sm leading-relaxed" style="color:#CBDACF;">Planeaciones, fichas y materiales de telesecundarias de toda la red, reunidos por docentes para docentes.</p>
                 </div>
-                <div class="space-y-3 text-xs" style="color:#CBDACF;">
+                <div class="space-y-2.5 md:space-y-3 text-xs my-6 md:my-0" style="color:#CBDACF;">
                     <div class="flex items-center gap-2"><i class="fa-solid fa-book-open" style="color:#D9A441;"></i><span>Materiales por asignatura y grado</span></div>
                     <div class="flex items-center gap-2"><i class="fa-solid fa-people-group" style="color:#D9A441;"></i><span>Comunidad de maestras y maestros</span></div>
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-shield-heart" style="color:#D9A441;"></i><span>Acceso verificado por correo (15 min)</span></div>
                 </div>
-                <div class="chalk-rule h-[3px] w-16 mt-8 rounded-full"></div>
+                <div class="chalk-rule h-[3px] w-16 rounded-full hidden md:block"></div>
             </div>
 
             <!-- PANEL DE FORMULARIO -->
@@ -52,25 +51,23 @@
                 </div>
 
                 <!-- FORMULARIO DE ACCESO / REGISTRO -->
-                <!-- Dentro del formulario de autenticación en inicio_sesion.html -->
-<form id="form-auth-pagina" onsubmit="manejarAuthPagina(event)" class="space-y-4">
-    <div id="campo-nombre-container" class="hidden">
-        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre completo</label>
-        <input type="text" id="auth-nombre" placeholder="Tu nombre y apellido" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
-    </div>
+                <form id="form-auth-pagina" onsubmit="manejarAuthPagina(event)" class="space-y-4">
+                    <div id="campo-nombre-container" class="hidden">
+                        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre completo</label>
+                        <input type="text" id="auth-nombre" placeholder="Tu nombre y apellido" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                    </div>
 
-    <!-- NUEVO CAMPO DE USUARIO -->
-    <div id="campo-usuario-container" class="hidden">
-        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre de usuario</label>
-        <input type="text" id="auth-usuario" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
-    </div>
+                    <div id="campo-usuario-container" class="hidden">
+                        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Nombre de usuario</label>
+                        <input type="text" id="auth-usuario" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                    </div>
 
-    <div>
-        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Correo electrónico</label>
-        <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
-    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium mb-1.5" style="color:#6B6255;">Correo electrónico</label>
+                        <input type="email" id="auth-email" required placeholder="ej. alumno@telesecundaria.edu.mx" class="w-full px-3.5 py-2.5 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+                    </div>
 
-    <div>
+                    <div>
         <div class="flex justify-between items-center mb-1.5">
             <label class="block text-[12px] font-medium" style="color:#6B6255;">Contraseña</label>
             <div id="contenedor-olvido-pass">
@@ -78,17 +75,32 @@
             </div>
         </div>
         <div class="relative">
-            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 pr-10 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
+            <input type="password" id="auth-password" oninput="validarRequisitosPassword(this.value)" required placeholder="••••••••" class="w-full px-3.5 py-2.5 pr-10 border rounded-lg text-xs md:text-sm bg-[#FBF7EE] border-[#E7DFC9] focus:ring-2 transition" style="--tw-ring-color:#2F6B4F;">
             <button type="button" onclick="alternarVisibilidadPassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center transition-colors" style="color:#9C927F;">
                 <i id="icono-ojo" class="fa-solid fa-eye text-sm"></i>
             </button>
         </div>
+        <!-- INDICADORES DE REQUISITOS DE CONTRASEÑA (Solo visible en Registro) -->
+        <div id="panel-requisitos-password" class="hidden mt-2.5 grid grid-cols-2 gap-1.5 text-[11px]">
+            <div id="req-longitud" class="flex items-center gap-1.5 text-red-500 transition-colors">
+                <i class="fa-solid fa-xmark text-xs font-bold"></i><span>Mínimo 8 caracteres</span>
+            </div>
+            <div id="req-mayuscula" class="flex items-center gap-1.5 text-red-500 transition-colors">
+                <i class="fa-solid fa-xmark text-xs font-bold"></i><span>Una mayúscula</span>
+            </div>
+            <div id="req-numero" class="flex items-center gap-1.5 text-red-500 transition-colors">
+                <i class="fa-solid fa-xmark text-xs font-bold"></i><span>Un número</span>
+            </div>
+            <div id="req-especial" class="flex items-center gap-1.5 text-red-500 transition-colors">
+                <i class="fa-solid fa-xmark text-xs font-bold"></i><span>Un carácter especial</span>
+            </div>
+        </div>
     </div>
 
-    <button type="submit" id="auth-submit-btn" class="w-full text-white py-3 rounded-lg text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
-        Entrar a la Comunidad
-    </button>
-</form>
+                    <button type="submit" id="auth-submit-btn" class="w-full text-white py-3 rounded-lg text-xs md:text-sm font-medium transition shadow-sm hover:opacity-95" style="background-color:#2F6B4F;">
+                        Entrar a la Comunidad
+                    </button>
+                </form>
 
                 <!-- SECCIÓN DE ESPERA DE VERIFICACIÓN DE CORREO -->
                 <div id="seccion-verificacion-pendiente" class="hidden text-center space-y-4">
@@ -111,14 +123,16 @@
                 <!-- CAMBIO ENTRE LOGIN Y REGISTRO -->
                 <div id="contenedor-cambio-modo" class="mt-6 text-center border-t pt-4" style="border-color:#F0EADA;">
                     <p id="auth-texto-alternativo" class="text-xs" style="color:#6B6255;">
-                        ¿No tienes cuenta?
-                        <button type="button" onclick="cambiarModoAuth('register')" class="font-semibold hover:underline" style="color:#2F6B4F;">Regístrate aquí</button>
+                        ¿No tienes cuenta? <button type="button" onclick="cambiarModoAuth('register')" class="font-semibold hover:underline" style="color:#2F6B4F;">Regístrate aquí</button>
                     </p>
                 </div>
 
             </div>
         </div>
     </div>
+
+    <!-- Contenedor de notificaciones flotantes -->
+    <div id="contenedor-notificaciones" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
     <!-- SCRIPT DE AUTENTICACIÓN -->
     <script type="module" src="auth.js"></script>
